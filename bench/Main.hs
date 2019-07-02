@@ -95,6 +95,10 @@ main = do
         , let p = copy → add
               g = foldl' (→) empty (replicate size p)
           in  bench "copyadd→identity" $ nf (rewriteUntilDone p identity) g
+        , let lhs = coherence
+              rhs = add → copy
+              g = cohere 5 coherence -- 64x64 square
+          in  bench "cohere5" $ nf (rewriteUntilDone lhs rhs) g
         ]
       ]
     ]
@@ -155,3 +159,16 @@ coherence = (copy <> copy) → middle → (add <> add)
   where
     -- the "coherence" subgraph
     middle = fromJust $ permute [0,2,1,3]
+
+-- cohere does "block-wise repetition" of a 2 → 2 graph, n times.
+-- i.e., it puts 4 copies of the graph in a grid, and connects the lower
+-- outputs of the upper-left graph to the upper inputs of the lower right
+-- graph, and vice versa.
+cohere :: Int -> OpenHypergraph Generator -> OpenHypergraph Generator
+cohere n hg = go 1 hg n
+  where
+    go size g 0 = g
+    go size g n =
+      let p = identityN size <> swap size size <> identityN size
+          g' = (g <> g) → p → (g <> g)
+      in  go (size * 2) g' (n - 1)
