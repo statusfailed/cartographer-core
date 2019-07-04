@@ -4,9 +4,10 @@
 {-# LANGUAGE FlexibleContexts #-}
 module Data.Hypergraph.Decompose where
 
-import Data.List (sort, sortOn, groupBy, unfoldr)
+import Data.List (sort, sortOn, groupBy, unfoldr, foldl')
 import Data.Ord (Down(..))
 import Data.Function (on)
+import Data.Maybe (fromJust)
 
 import Data.Hypergraph.Type
 import Data.Hypergraph.Search
@@ -32,6 +33,32 @@ termIdentity n = TPermutation [0..n-1]
 --
 data Decomposition a = Decomposition { unDecomposition :: [[a]] }
   deriving(Eq, Ord, Read, Show)
+
+-- e.g.
+-- @id === biFoldMap singleton (fromJust . permute) (<>) (→)@
+-- NOTE: also kind of unsafe, lots of calls to fromJust
+biFoldMap
+  :: (Eq sig, Signature sig, Monoid r)
+  => (sig -> r)
+  -> ([Int] -> r) -- ^ handle permutations of wires
+  -> (r -> r -> r) -- ^ monoidal composition
+  -> (r -> r -> r) -- ^ sequential composition
+  -> OpenHypergraph sig
+  -> r
+biFoldMap f p m s =
+  outer . fmap inner . removeBoundary . fromJust . decomposeAcyclic
+  where
+    inner = foldl' m mempty . fmap k -- terms into r, then fold up with <>
+    outer = foldl' s mempty -- compose folded <> terms together using →
+    k (TGen x) = f x
+    k (TPermutation x) = p x
+
+    unwrap (TGen Boundary) = []
+    unwrap (TGen (Gen (_, x))) = [TGen x]
+    unwrap (TPermutation xs) = [TPermutation xs]
+
+    -- foo :: [[Term (Open (HyperEdgeId, sig))]]-> [[Term sig]]
+    removeBoundary = filter (not . Prelude.null) . fmap (>>= unwrap)
 
 -- | Decompose an acyclic 'OpenHypergraph'
 -- NOTE: this is a /really bad/ algorithm complexity-wise.
