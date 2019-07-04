@@ -26,6 +26,7 @@ library
                  , Data.Hypergraph.Matching
                  , Data.Hypergraph.Rewriting
                  , Data.Hypergraph.Search
+                 , Data.Hypergraph.Decompose
   -- other-extensions:    
   ghc-options:
     -O2

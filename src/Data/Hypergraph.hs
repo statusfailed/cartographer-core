@@ -3,6 +3,7 @@ module Data.Hypergraph
   , module Data.Hypergraph.Algebraic
   , module Data.Hypergraph.Matching
   , module Data.Hypergraph.Rewriting
+  , module Data.Hypergraph.Decompose
   ) where
 
 -- Hypergraph type and basic functions
@@ -22,3 +23,6 @@ import Data.Hypergraph.Rewriting
 
 -- Extra traversals
 import Data.Hypergraph.Search
+
+-- Decomposition
+import Data.Hypergraph.Decompose

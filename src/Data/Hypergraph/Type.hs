@@ -6,6 +6,8 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveTraversable #-}
+{-# LANGUAGE DeriveFoldable #-}
 module Data.Hypergraph.Type
   ( Signature(..)
   , HyperEdgeId(..)
@@ -176,7 +178,7 @@ type ClosedHypergraph sig = Hypergraph Identity sig
 -- This type essentially extends the set of hyperedges with left boundary
 -- and a right boundary of arbitrary size.
 data Open a = Gen a | Boundary
-  deriving(Eq, Ord, Read, Show, Generic)
+  deriving(Eq, Ord, Read, Show, Generic, Foldable, Traversable)
 
 instance NFData a => NFData (Open a)
 
@@ -316,8 +318,8 @@ isComplete hg = numPorts == 2 * numWires
     allPorts = toSize hg : fmap toSize (toList $ signatures hg)
 
 edgeType
-  :: Functor f => Hypergraph f sig -> f HyperEdgeId -> f (Maybe sig)
-edgeType g = fmap (\e -> signatureOf e g)
+  :: (Traversable f) => Hypergraph f sig -> f HyperEdgeId -> Maybe (f sig)
+edgeType g = traverse (\e -> signatureOf e g)
 
 signatureOf :: HyperEdgeId -> Hypergraph f sig -> Maybe sig
 signatureOf e hg = Map.lookup e (signatures hg)

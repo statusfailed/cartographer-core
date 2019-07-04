@@ -179,10 +179,9 @@ edgeTypeMatch
   :: Eq a
   => OpenHypergraph a -> OpenHypergraph a -> Port x Open -> Port x Open -> Bool
 edgeTypeMatch pattern context (Port p _) (Port p' _) = maybe False id $ do
-  case (t1, t2) of
-    (Boundary, _)   -> return True
-    (_, Boundary)   -> return False
-    (Gen a, Gen b)  -> liftM2 (==) a b
-  where
-    t1 = edgeType pattern p
-    t2 = edgeType context p'
+  t1 <- edgeType pattern p
+  t2 <- edgeType context p'
+  return $ case (t1, t2) of
+    (Boundary, _)   -> True
+    (_, Boundary)   -> False
+    (Gen a, Gen b)  -> a == b
