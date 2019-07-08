@@ -7,6 +7,7 @@ module Data.Hypergraph.Algebraic
   ( (→)
   , tensor
   , permute
+  , permuteBack
   , identityN
   , swap
   , OpenHypergraph(..)
@@ -99,25 +100,20 @@ a → b = a
     offset   = max 0 (ao - bi)
 
     rewireB :: Wire Open -> Wire Open
-    rewireB = onFst reindexLeft . pairUp . (reindexPort *** reindexPort)
-      where onFst f (a,b) = (f a, b)
+    rewireB = pairUp . (reindexPort *** reindexPort)
 
-    -- TODO: don't bother looking up if i >= ao.
+    -- If boundary port is not found, it's an "overhanging" input, and so we
+    -- need to adjust it to "fit" into the left boundary of a.
     pairUp :: Wire Open -> Wire Open
     pairUp w@(Port Boundary i, t) =
       case Bimap.lookupR (Port Boundary i) (connections a) of
-        Nothing -> w
+        Nothing -> (Port Boundary $ i - ao + ai, t)
         Just s' -> (s', t)
     pairUp w = w
 
-    -- OK, good.
+    -- modify the hyperedge IDs of wires of B, and offset boundaries.
     reindexPort (Port Boundary i) = Port Boundary (i + offset)
     reindexPort (Port (Gen e)  i) = Port (Gen (e + maxA)) i
-
-    -- NOTE: only called *after* matchBoundaries, so it will only get ports
-    -- which will eventually connect to the boundary.
-    reindexLeft (Port Boundary i) = Port Boundary (i - ao + ai)
-    reindexLeft p = p
 
 -- | Create a permutation of wires. If the supplied argument is not a
 -- permutation, Nothing is returned.
@@ -128,6 +124,19 @@ permute ports
   | isPermutation ports =
       Just $ Hypergraph
         { connections = Bimap.fromList (toWire <$> zip [0..] ports)
+        , signatures = Map.empty
+        , nextHyperEdgeId = 0
+        }
+  | otherwise = Nothing
+  where
+    toWire (i,j) = (Port Boundary i, Port Boundary j)
+    isPermutation = all (uncurry (==)) . zip [0..] . sort
+
+permuteBack :: [Int] -> Maybe (OpenHypergraph a)
+permuteBack ports
+  | isPermutation ports =
+      Just $ Hypergraph
+        { connections = Bimap.fromList (toWire <$> zip ports [0..])
         , signatures = Map.empty
         , nextHyperEdgeId = 0
         }

@@ -52,6 +52,7 @@ test-suite test
     Data.Hypergraph.Test.Algebraic
     Data.Hypergraph.Test.Match
     Data.Hypergraph.Test.Rewriting
+    Data.Hypergraph.Test.Decompose
   build-depends:
       base
     , time

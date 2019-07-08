@@ -57,7 +57,7 @@ biFoldMap f p m s =
     unwrap (TGen (Gen (_, x))) = [TGen x]
     unwrap (TPermutation xs) = [TPermutation xs]
 
-    -- foo :: [[Term (Open (HyperEdgeId, sig))]]-> [[Term sig]]
+    -- removeBoundary :: [[Term (Open (HyperEdgeId, sig))]]-> [[Term sig]]
     removeBoundary = filter (not . Prelude.null) . fmap (>>= unwrap)
 
 -- | Decompose an acyclic 'OpenHypergraph'
@@ -70,13 +70,18 @@ decomposeAcyclic
   -> Maybe [[Term (Open (HyperEdgeId, a))]]
 decomposeAcyclic g = (start:) <$> rest
   where
-    rest = fmap (>>= f) . sequence $ unfoldr (step g stop) s0
+    rest = fmap (>>= f) . sequence $ unfoldr (step g) s0
     f (p, t) = [pure (TPermutation p), t]
 
     (leftEdges, s0) = initialFrontier g
-    start = fmap TGen leftEdges
-    stop = (== Boundary)
 
+    -- unfortunate hack; because "Boundary" edges don't annotate their size,
+    -- have to explicitly put in the right number of identity wires.
+    start = fmap fixBoundary leftEdges
+      where
+        fixBoundary Boundary = TPermutation [0..i-1]
+        fixBoundary x = TGen x
+        (i, _) = toSize g
 
 
 -- compute the initial frontier: all zero-input hyperedges' direct descendants.
@@ -95,23 +100,32 @@ initialFrontier g = (edges', targets)
 --  1) A permutation and a list of terms in the "vertical slice"
 --  2) A list of subsequent target ports to carry to the next iteration
 step
-  :: (Ord (f HyperEdgeId), Eq a, Applicative f, Traversable f)
-  => Hypergraph f a
-  -> (f HyperEdgeId -> Bool) -- ugly hack to prevent boundaries causing cycles
-  -> [Port Target f]
-  -> Maybe (Maybe ([Int], [Term (f (HyperEdgeId, a))]), [Port Target f])
-step _ _ [] = Nothing
-step g stop frontier = Just ((permutation,) <$> outputs, nextState)
+  :: OpenHypergraph a
+  -> [Port Target Open]
+  -> Maybe (Maybe ([Int], [Term (Open (HyperEdgeId, a))]), [Port Target Open])
+step _ [] = Nothing
+step g frontier = Just ((permutation,) <$> outputs, nextState)
   where
     sorted      = sort $ zip frontier [0..]
     permutation = snd <$> sorted
     grouped     = groupBy ((==) `on` forgetIndex) . fmap fst $ sorted
 
+    -- another unfortunate hack- propagate target boundary until
+    -- there is only the boundary left to place, or else we get a bug
+    -- for graphs like this: --o o--
     -- merged :: [Either (f HyperEdgeId) [Port Target f]]
-    merged = fmap (merge g) grouped
+    merged = case fmap (merge g) grouped of
+      [Left Boundary] -> [Left Boundary]
+      xs -> zipWith unBoundary xs grouped
+
+    unBoundary (Left Boundary) ports = Right ports
+    unBoundary x _ = x
 
     outputs = traverse (output g) merged
     nextState = merged >>= state g stop
+
+    stop = (== Boundary)
+
   
 forgetIndex :: Port a f -> f HyperEdgeId
 forgetIndex (Port x _) = x
@@ -129,6 +143,8 @@ merge g ps = if hasAllPorts g ps then Left (f (head ps)) else Right ps
   where f (Port x _) = x
 
 -- This is the dodgiest implementation. Also, sort shouldn't really be needed!
+-- NOTE: have to treat boundaries as special - we don't want them to appear
+-- until all other generators have been placed (I think?)
 hasAllPorts
   :: forall f a sig. (Reifies a PortRole, Ord (f HyperEdgeId))
   => Hypergraph f sig

@@ -19,6 +19,7 @@ tests = testGroup "Data.Hypergraph.Algebraic"
   [ QC.testProperty "prop_dfsAllConnections" prop_dfsAllConnections
   , QC.testProperty "prop_complete" prop_complete
   , QC.testProperty "prop_completeSingletons" prop_completeSingletons
+  , QC.testProperty "prop_compositionSize" prop_compositionSize
   ]
 
 -- | Verify that composing two singleton hypergraphs is Complete.
@@ -35,3 +36,10 @@ prop_dfsAllConnections :: OpenHypergraph Generator -> Property
 prop_dfsAllConnections g =
       sort (undirectedDfs g . Bimap.toList . connections $ g)
   === sort (Bimap.toList $ connections g)
+
+prop_compositionSize
+  :: OpenHypergraph Generator -> OpenHypergraph Generator -> Property
+prop_compositionSize a b =
+  let (i, n) = toSize a
+      (m, o) = toSize b
+  in  n >= m ==> i === (fst . toSize) (a → b)
