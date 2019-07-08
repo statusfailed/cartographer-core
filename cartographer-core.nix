@@ -1,13 +1,20 @@
-{ mkDerivation, array, base, bimap, containers, linear, logict, mtl
-, reflection, stdenv, tasty, tasty-quickcheck
+{ mkDerivation, base, bimap, containers, criterion, deepseq, logict
+, QuickCheck, reflection, stdenv, tasty, tasty-quickcheck, time
 }:
 mkDerivation {
   pname = "cartographer-core";
-  version = "0.1.0.2";
+  version = "0.1.0.0";
   src = ./.;
+  isLibrary = true;
+  isExecutable = true;
   libraryHaskellDepends = [
-    array base bimap containers linear logict mtl reflection
+    base bimap containers deepseq logict reflection
   ];
-  testHaskellDepends = [ base tasty tasty-quickcheck ];
+  executableHaskellDepends = [
+    base bimap containers criterion deepseq logict time
+  ];
+  testHaskellDepends = [
+    base bimap containers logict QuickCheck tasty tasty-quickcheck time
+  ];
   license = stdenv.lib.licenses.mit;
 }
