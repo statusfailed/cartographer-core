@@ -132,9 +132,9 @@ toHyperEdgeId :: Port a Open -> Maybe HyperEdgeId
 toHyperEdgeId (Port Boundary _) = Nothing
 toHyperEdgeId (Port (Gen e) _)  = Just e
 
--- | The type of Hypergraphs, parametrised by the type of generators (sig).
--- By using different types for "f" we can make this open or closed
--- hypergraphs.
+-- | The type of (monogamous) Hypergraphs, parametrised by the type of
+-- generators (sig).  By using different types for "f" we can make this open or
+-- closed hypergraphs.
 --
 -- NOTE: we explicitly ignore the "nodes" of the hypergraph in this type.
 -- That's because of the monogamicity requirement of the paper: no node can

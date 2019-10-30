@@ -185,3 +185,8 @@ edgeTypeMatch pattern context (Port p _) (Port p' _) = maybe False id $ do
     (Boundary, _)   -> True
     (_, Boundary)   -> False
     (Gen a, Gen b)  -> a == b
+
+-- | Check if a particular 'Matching' is convex.
+-- see: Definition 3.10 of https://arxiv.org/pdf/1602.06771.pdf
+isConvex :: OpenHypergraph a -> Matching a -> Bool
+isConvex hg m = False
