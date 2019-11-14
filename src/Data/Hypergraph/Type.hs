@@ -213,7 +213,7 @@ type OpenHypergraph sig = Hypergraph Open sig
 -- Open hypergraphs have a signature - the number of input and output ports
 -- connected to on the boundary.
 instance Signature sig => Signature (OpenHypergraph sig) where
-  toSize = maxBoundaryPorts
+  toSize = hypergraphSize
 
 -------------------------------
 -- Basic graphs

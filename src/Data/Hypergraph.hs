@@ -26,3 +26,6 @@ import Data.Hypergraph.Search
 
 -- Decomposition
 import Data.Hypergraph.Decompose
+
+-- | Convexity checking
+import Data.Hypergraph.Convex
