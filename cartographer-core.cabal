@@ -27,6 +27,7 @@ library
                  , Data.Hypergraph.Rewriting
                  , Data.Hypergraph.Search
                  , Data.Hypergraph.Decompose
+                 , Data.Hypergraph.Convex
   -- other-extensions:    
   ghc-options:
     -O2
@@ -50,6 +51,7 @@ test-suite test
     Data.Hypergraph.Test.Match
     Data.Hypergraph.Test.Rewriting
     Data.Hypergraph.Test.Decompose
+    Data.Hypergraph.Test.Convex
   build-depends:
       base
     , time

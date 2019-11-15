@@ -1,9 +1,8 @@
 {-# LANGUAGE TupleSections #-}
-module Data.Hypergraph.Convex where
-  --( isConvex
-  --, Token(..)
-  --, ConvexState(..)
-  --) where
+module Data.Hypergraph.Convex
+  ( isConvex
+  , nonConvex
+  ) where
 
 import Control.Monad
 import Data.List (unfoldr)
@@ -78,28 +77,28 @@ isConvex g = Prelude.null . nonConvex g
 -------------------------------
 -- TODO: move this test scaffolding to real tests!
 
-data G = G String (Int, Int)
-  deriving(Eq, Ord, Read, Show)
+--data G = G String (Int, Int)
+  --deriving(Eq, Ord, Read, Show)
 
-instance Signature G where
-  toSize (G _ x) = x
+--instance Signature G where
+  --toSize (G _ x) = x
 
-pattern :: OpenHypergraph G
-pattern = lhs →  mid →  rhs
-  where
-    lhs = identity <> singleton (G "L" (1,2))
-    rhs = identity <> singleton (G "R" (2,1))
-    (Just mid) = permute [1,0,2]
+--pattern :: OpenHypergraph G
+--pattern = lhs →  mid →  rhs
+  --where
+    --lhs = identity <> singleton (G "L" (1,2))
+    --rhs = identity <> singleton (G "R" (2,1))
+    --(Just mid) = permute [1,0,2]
 
-context :: OpenHypergraph G
-context = lhs →  mid →  rhs
-  where
-    lhs = singleton (G "L" (1,2))
-    rhs = singleton (G "R" (2,1))
-    mid = singleton (G "M" (1,1)) <> identity
+--context :: OpenHypergraph G
+--context = lhs →  mid →  rhs
+  --where
+    --lhs = singleton (G "L" (1,2))
+    --rhs = singleton (G "R" (2,1))
+    --mid = singleton (G "M" (1,1)) <> identity
 
-[m] = match pattern context
-[m2] = match pattern pattern
+--[m] = match pattern context
+--[m2] = match pattern pattern
 
-mwires = mapM_ print . Bimap.toList $ _matchingWires m
-medges = mapM_ print . Bimap.toList $ _matchingEdges m
+--mwires = mapM_ print . Bimap.toList $ _matchingWires m
+--medges = mapM_ print . Bimap.toList $ _matchingEdges m

@@ -16,6 +16,7 @@ import Data.Hypergraph.Test.Algebraic as Algebraic
 import Data.Hypergraph.Test.Match as Match
 import Data.Hypergraph.Test.Rewriting as Rewriting
 import Data.Hypergraph.Test.Decompose as Decompose
+import Data.Hypergraph.Test.Convex as Convex
 
 import Data.Time.Clock
 import Control.Monad
@@ -29,6 +30,7 @@ mainTests = testGroup "Data.Hypergraph"
   , Match.tests
   , Rewriting.tests
   , Decompose.tests
+  , Convex.tests
   ]
 
 main :: IO ()

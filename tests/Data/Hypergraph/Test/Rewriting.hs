@@ -23,16 +23,6 @@ tests = testGroup "Data.Hypergraph.Rewrite"
   , QC.testProperty "prop_rewriteIsComplete" prop_rewriteIsComplete
   ]
 
--- Take integers (k, n) and an OpenHypergraph of size (k', n'), and return a
--- new hypergraph of size (k, n) by prepending and appending generators of size
--- (k, k') and (n', n), respectively.
-adaptSize :: Int -> Int -> OpenHypergraph Generator -> OpenHypergraph Generator
-adaptSize k n g = a → g → b
-  where
-    (k', n') = toSize g
-    a = singleton $ Generator 0 (k, k')
-    b = singleton $ Generator 0 (n', n)
-
 -------------------------------
 -- Properties
 

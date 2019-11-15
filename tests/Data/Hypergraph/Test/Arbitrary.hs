@@ -56,3 +56,14 @@ instance Arbitrary Generator where
         n <- choose (0, k) -- of which n are inputs
         return (n, k - n)
 
+-- Take integers (k, n) and an OpenHypergraph of size (k', n'), and return a
+-- new hypergraph of size (k, n) by prepending and appending generators of size
+-- (k, k') and (n', n), respectively.
+-- NOTE: beware, this can result in "disconnected" hypergraphs; for example when
+-- the supplied hypergraph is of type (0, 0)!
+adaptSize :: Int -> Int -> OpenHypergraph Generator -> OpenHypergraph Generator
+adaptSize k n g = a → g → b
+  where
+    (k', n') = toSize g
+    a = singleton $ Generator 0 (k, k')
+    b = singleton $ Generator 0 (n', n)

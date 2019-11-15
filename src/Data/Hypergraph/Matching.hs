@@ -25,10 +25,14 @@ import qualified Data.Bimap as Bimap
 choice :: (Functor t, Foldable t, MonadPlus f) => t a -> f a
 choice = msum . fmap pure
 
+-- NOTE: doesnt this rule out e.g.,
+-- pattern (-BOX-) <> (-BOX-)match in -BOX-BOX- ?
+-- NO: because we'd get R0 <-> N1 and N1 <-> L0 ?
 data Matching a = Matching
   { _matchingWires :: Bimap (Wire Open) (Wire Open)
   , _matchingEdges :: Bimap HyperEdgeId HyperEdgeId
   } deriving(Eq, Ord, Show)
+
 
 instance NFData a => NFData (Matching a) where
   rnf (Matching w e) = rnf (Bimap.toList w, Bimap.toList e)
