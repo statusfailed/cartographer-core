@@ -16,6 +16,7 @@ import Data.Hypergraph.Type as Hypergraph hiding (empty)
 import Data.Hypergraph.Search (undirectedDfs)
 
 import Data.List (foldl')
+import qualified Data.Map as Map
 import Data.Bimap (Bimap)
 import qualified Data.Bimap as Bimap
 
@@ -50,9 +51,25 @@ match
   => OpenHypergraph a -> OpenHypergraph a -> f (Matching a)
 match pattern context
   | Hypergraph.null pattern = pure empty -- empty pattern => empty matching
-  | otherwise = foldM (matchWire pattern context) empty wires
+  | otherwise = matchDiscrete =<< foldM (matchWire pattern context) empty wires
   where
     wires = undirectedDfs pattern (Bimap.toList $ connections pattern)
+    edges = Map.toList (signatures pattern)
+
+    -- Match any remaining edges of type (0, 0)
+    -- (i.e., those with no nodes attached, that are missed by matching wires)
+    matchDiscrete m = foldM matchEdge m $
+      filter (\(e,s) -> Bimap.notMember e (_matchingEdges m)) edges
+
+    -- NOTE: this is quadratic and shouldn't be: don't want to iterate through
+    -- all context edges for every single pattern node!
+    matchEdge m (eid, sig) = do
+      let f (ceid, csig) =
+            (csig == sig) && Bimap.notMemberR ceid (_matchingEdges m)
+      (c, _) <- choice $ filter f $ Map.toList (signatures context)
+      return $ m {
+        _matchingEdges = Bimap.insert eid c (_matchingEdges m)
+      }
 
 -- | Match a wire from the pattern with a wire in the context.
 -- First proposes possible matches (candidates), then checks the match would be

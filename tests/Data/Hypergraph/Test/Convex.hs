@@ -67,8 +67,8 @@ prop_selfDualComposition
   :: OpenHypergraph Generator -- ^ The left (and right-) hand sides of the diagram
   -> Property
 prop_selfDualComposition left' =
-  let matches = match pattern context
-  in  (not $ Prelude.null matches) ==> isConvex context (head matches) === False
+  let (m:_) = match pattern context
+  in  isConvex context m === False
   where
     (k, n') = toSize left'
     n = max n' 2

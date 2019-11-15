@@ -46,13 +46,13 @@ opposite (Generator flag (i,o)) = Generator flag (o, i)
 instance Signature Generator where
   toSize = generatorType
 
--- | Generate small signatures, with 2 generators of each type from (
+-- | Generate small signatures, with 2 generators of each type
 instance Arbitrary Generator where
   arbitrary = Generator <$> choose (0, 1) <*> randomType
     where
       maxPorts = 4
       randomType = do
-        k <- choose (1, maxPorts) -- total number of ports
+        k <- choose (0, maxPorts) -- total number of ports
         n <- choose (0, k) -- of which n are inputs
         return (n, k - n)
 

@@ -18,6 +18,7 @@ import Debug.Trace
 
 tests = testGroup "Data.Hypergraph.Match"
   [ QC.testProperty "prop_matchSelf" prop_matchSelf
+  , QC.testProperty "prop_match00" prop_match00
   , QC.testProperty "prop_matchTwice" prop_matchTwice
   , QC.testProperty "prop_matchSizeEqualsPatternSize"
       prop_matchSizeEqualsPatternSize
@@ -50,6 +51,12 @@ graphSize g = (Bimap.size (connections g), Map.size (signatures g))
 -- the same.
 prop_matchSelf :: OpenHypergraph Generator -> Property
 prop_matchSelf a = 1 === (length . take 1 $ matchAll a a)
+
+-- | Matching against (0, 0) generators should work!
+prop_match00 :: Property
+prop_match00 = let [m] = matchAll zz zz
+  in  Bimap.size (_matchingEdges m) === 1
+  where zz = singleton $ Generator 0 (0, 0)
 
 -- | NOTE: this test length > 2 because of cases like the following:
 --
