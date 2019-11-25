@@ -24,10 +24,11 @@ library
                  , Data.Hypergraph.Algebraic
                  , Data.Hypergraph.Unsafe
                  , Data.Hypergraph.Matching
+                 , Data.Hypergraph.Matching.Convex
+                 , Data.Hypergraph.Matching.Internal
                  , Data.Hypergraph.Rewriting
                  , Data.Hypergraph.Search
                  , Data.Hypergraph.Decompose
-                 , Data.Hypergraph.Convex
   -- other-extensions:    
   ghc-options:
     -O2
@@ -48,9 +49,9 @@ test-suite test
     Data.Hypergraph.Test.Arbitrary
     Data.Hypergraph.Test.Type
     Data.Hypergraph.Test.Algebraic
-    Data.Hypergraph.Test.Match
     Data.Hypergraph.Test.Rewriting
     Data.Hypergraph.Test.Decompose
+    Data.Hypergraph.Test.Matching
     Data.Hypergraph.Test.Convex
   build-depends:
       base

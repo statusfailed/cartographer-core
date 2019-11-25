@@ -4,7 +4,6 @@ module Data.Hypergraph
   , module Data.Hypergraph.Matching
   , module Data.Hypergraph.Rewriting
   , module Data.Hypergraph.Decompose
-  , module Data.Hypergraph.Convex
   ) where
 
 -- Hypergraph type and basic functions
@@ -27,6 +26,3 @@ import Data.Hypergraph.Search
 
 -- Decomposition
 import Data.Hypergraph.Decompose
-
--- | Convexity checking
-import Data.Hypergraph.Convex

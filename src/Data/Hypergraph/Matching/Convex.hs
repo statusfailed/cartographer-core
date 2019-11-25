@@ -1,5 +1,5 @@
 {-# LANGUAGE TupleSections #-}
-module Data.Hypergraph.Convex
+module Data.Hypergraph.Matching.Convex
   ( isConvex
   , nonConvex
   ) where
@@ -10,12 +10,12 @@ import Data.Maybe
 import qualified Data.Bimap as Bimap
 
 import Data.Hypergraph.Type as Hypergraph hiding (empty)
-import Data.Hypergraph.Matching (Matching(..))
+import Data.Hypergraph.Matching.Internal (Matching(..))
 import Data.Hypergraph.Search (wires)
 
 -- TODO: remove these imports!
 import Data.Hypergraph.Algebraic ((→), permute)
-import Data.Hypergraph.Matching (match)
+--import Data.Hypergraph.Matching.Internal (matchNonConvex)
 
 -- | Check if a particular 'Matching' is convex.
 -- see: Definition 3.10 of https://arxiv.org/pdf/1602.06771.pdf
@@ -71,5 +71,8 @@ nonConvex' g m ws =
     inMatching w = isJust (Bimap.lookupR w $ _matchingWires m)
 
 -- | Is a matching convex?
-isConvex :: OpenHypergraph a -> Matching a -> Bool
+isConvex
+  :: OpenHypergraph a -- ^ Context hypergraph
+  -> Matching a
+  -> Bool
 isConvex g = Prelude.null . nonConvex g

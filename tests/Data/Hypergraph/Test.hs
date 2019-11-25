@@ -13,7 +13,7 @@ import Data.Hypergraph
 import Data.Hypergraph.Test.Arbitrary
 import Data.Hypergraph.Test.Type as Type
 import Data.Hypergraph.Test.Algebraic as Algebraic
-import Data.Hypergraph.Test.Match as Match
+import Data.Hypergraph.Test.Matching as Matching
 import Data.Hypergraph.Test.Rewriting as Rewriting
 import Data.Hypergraph.Test.Decompose as Decompose
 import Data.Hypergraph.Test.Convex as Convex
@@ -27,7 +27,7 @@ mainTests :: TestTree
 mainTests = testGroup "Data.Hypergraph"
   [ Type.tests
   , Algebraic.tests
-  , Match.tests
+  , Matching.tests
   , Rewriting.tests
   , Decompose.tests
   , Convex.tests

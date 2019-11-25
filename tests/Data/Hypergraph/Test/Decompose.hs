@@ -7,7 +7,7 @@ import Data.Maybe (fromJust)
 
 import Data.Hypergraph
 import Data.Hypergraph.Decompose
-import Data.Hypergraph.Test.Match (graphSize)
+import Data.Hypergraph.Test.Matching (graphSize)
 import Data.Hypergraph.Test.Arbitrary
 
 -------------------------------

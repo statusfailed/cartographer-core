@@ -1,4 +1,4 @@
-module Data.Hypergraph.Test.Match where
+module Data.Hypergraph.Test.Matching where
 
 import Test.Tasty
 import Test.Tasty.QuickCheck as QC
