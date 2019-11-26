@@ -31,8 +31,7 @@ termIdentity n = TPermutation [0..n-1]
 --
 -- @(a <> b <> c) → (d <> e <> f) → (g ...@
 --
-data Decomposition a = Decomposition { unDecomposition :: [[a]] }
-  deriving(Eq, Ord, Read, Show)
+type Decomposition a = [[Term (Open (HyperEdgeId, a))]]
 
 -- e.g.
 -- @id === biFoldMap singleton (fromJust . permute) (<>) (→)@
@@ -67,7 +66,7 @@ biFoldMap f p m s =
 decomposeAcyclic
   :: (Eq a, Signature a)
   => OpenHypergraph a
-  -> Maybe [[Term (Open (HyperEdgeId, a))]]
+  -> Maybe (Decomposition a)
 decomposeAcyclic g = (start:) <$> rest
   where
     rest = fmap (>>= f) . sequence $ unfoldr (step g) s0
