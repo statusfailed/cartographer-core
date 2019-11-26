@@ -19,7 +19,6 @@ import qualified Data.Sequence as Seq
 
 -- | Given a set of starting nodes, do an undirected depth-first search to find
 -- all reachable nodes.
--- TODO: tidy this up, it\'s a bit nasty!
 undirectedDfs :: OpenHypergraph a -> [Wire Open] -> [Wire Open]
 undirectedDfs g = go Set.empty
   where

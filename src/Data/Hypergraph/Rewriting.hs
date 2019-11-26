@@ -73,7 +73,6 @@ splice matching replacement context = do
       where
         f = isJust
 
-    -- TODO: no more fromJust, boo!
     fixWire :: Wire Open -> Maybe (Wire Open)
     fixWire (s, t) = do
       s' <- fixPort sources s

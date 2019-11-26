@@ -74,8 +74,8 @@ decomposeAcyclic g = (start:) <$> rest
 
     (leftEdges, s0) = initialFrontier g
 
-    -- unfortunate hack; because "Boundary" edges don't annotate their size,
-    -- have to explicitly put in the right number of identity wires.
+    -- TODO unfortunate hack; because "Boundary" edges don't annotate their
+    -- size, we have to explicitly put in the right number of identity wires.
     start = fmap fixBoundary leftEdges
       where
         fixBoundary Boundary = TPermutation [0..i-1]
