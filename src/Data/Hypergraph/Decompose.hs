@@ -23,6 +23,14 @@ data Term a
   | TPermutation [Int] -- arbitrary permutations (including identity)
   deriving(Eq, Ord, Read, Show)
 
+instance Signature a => Signature (Term a) where
+  toSize (TGen x) = toSize x
+  toSize (TPermutation p) = let n = length p in (n, n)
+
+instance Functor Term where
+  fmap f (TGen x) = TGen (f x)
+  fmap f (TPermutation p) = TPermutation p
+
 termIdentity :: Int -> Term a
 termIdentity n = TPermutation [0..n-1]
 

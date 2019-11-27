@@ -24,5 +24,3 @@ match pattern context = do
 
 matchAll :: Eq a => OpenHypergraph a -> OpenHypergraph a -> [Matching a]
 matchAll pattern context = observeAll $ match pattern context
-
-
